@@ -1,0 +1,70 @@
+import asyncio
+import urllib.parse
+import os
+
+from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncWebsocketConsumer
+from distutils.util import strtobool
+from dotenv import load_dotenv
+from guacamole.client import GuacamoleClient
+
+load_dotenv()
+
+
+class GuacamoleWebSocketConsumer(AsyncWebsocketConsumer):
+    client = None
+    task = None
+
+    async def connect(self):
+        """
+        Initiate the GuacamoleClient and create a connection to it.
+        """
+        guacd_hostname = os.getenv("GUACD_SERVICE_HOST", "localhost")
+        guacd_port = int(os.getenv("GUACD_SERVICE_PORT", "4822"))
+
+        params = urllib.parse.parse_qs(self.scope["query_string"].decode())
+
+        ports = params.get("port", ["5903"])
+        default_port = int(ports[0])
+        self.client = GuacamoleClient(guacd_hostname, guacd_port)
+        self.client.handshake(
+            protocol="vnc",
+            width=1280,
+            height=1024,
+            hostname="localhost",
+            port=default_port,
+        )
+
+        if self.client.connected:
+            # start receiving data from GuacamoleClient
+            loop = asyncio.get_event_loop()
+            self.task = loop.create_task(self.open())
+
+            # Accept connection
+            await self.accept(subprotocol="guacamole")
+        else:
+            await self.close()
+
+    async def disconnect(self, code):
+        """
+        Close the GuacamoleClient connection on WebSocket disconnect.
+        """
+        self.task.cancel()
+        await sync_to_async(self.client.close)()
+
+    async def receive(self, text_data=None, bytes_data=None):
+        """
+        Handle data received in the WebSocket, send to GuacamoleClient.
+        """
+        if text_data is not None:
+            self.client.send(text_data)
+
+    async def open(self):
+        """
+        Receive data from GuacamoleClient and pass it to the WebSocket
+        """
+        while True:
+            content = await sync_to_async(self.client.receive)()
+            if content:
+                await self.send(text_data=content)
