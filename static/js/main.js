@@ -1,4 +1,4 @@
-function GuacMe(element, port, session_id) {
+function GuacMe(element, port, session_id, recording_name) {
     "use strict";
 
     var terminal_connected = false;
@@ -17,7 +17,7 @@ function GuacMe(element, port, session_id) {
         terminal_client = new Guacamole.Client(
             new Guacamole.WebSocketTunnel(terminal_ws_url + '/guac/websocket-tunnel/' + session_id)
         );
-        terminal_connect(port);
+        terminal_connect(port, recording_name);
 
         terminal_element = terminal_client.getDisplay().getElement();
 
@@ -151,7 +151,7 @@ function GuacMe(element, port, session_id) {
 
     };
 
-    var terminal_connect = function(port) {
+    var terminal_connect = function(port, recording_name) {
         if (terminal_connected) {
             terminal_client.disconnect()
             terminal_connected = false;
@@ -160,6 +160,7 @@ function GuacMe(element, port, session_id) {
         try {
             terminal_client.connect($.param({
                 'port': port,
+                'recording_name': recording_name,
             }));
             terminal_connected = true;
         } catch (e) {

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <meta charset="utf-8"/>
+    <title>Guacamole Console</title>
+</head>
+<body>
+    {% block content %}
+        <div class="alert alert-secondary">
+            <h4>Error</h4>
+            <p>{{error_msg}}</p>
+            <button type="button" onclick="window.close();">Close</button>
+        </div>
+    {% endblock %}
+</body>
+</html>

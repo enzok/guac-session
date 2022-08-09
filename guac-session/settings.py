@@ -173,9 +173,16 @@ logging.config.dictConfig(
                 "formatter": "default",
             },
             "file": {
-                "class": "logging.FileHandler",
+                "class": "logging.handlers.RotatingFileHandler",
                 "filename": BASE_DIR / "guac-server.log",
                 "formatter": "default",
+                "maxBytes": 1024 * 1024 * 100,  # 100 mb
+            },
+            "gunicorn": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "formatter": "default",
+                "filename": BASE_DIR / "gunicorn.log",
+                "maxBytes": 1024 * 1024 * 100,  # 100 mb
             },
             "django.server": DEFAULT_LOGGING["handlers"]["django.server"],
         },
@@ -192,6 +199,11 @@ logging.config.dictConfig(
                 "handlers": ["file"],
                 "level": LOG_LEVEL,
                 "propagate": False,
+            },
+            "gunicorn.errors": {
+                "level": LOG_LEVEL,
+                "handlers": ["gunicorn"],
+                "propagate": True,
             },
             "django.server": DEFAULT_LOGGING["loggers"]["django.server"],
         },

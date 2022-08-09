@@ -22,18 +22,24 @@ class GuacamoleWebSocketConsumer(AsyncWebsocketConsumer):
         """
         guacd_hostname = os.getenv("GUACD_SERVICE_HOST", "localhost")
         guacd_port = int(os.getenv("GUACD_SERVICE_PORT", "4822"))
+        guacd_recording_path = os.getenv("GUACD_RECORDING_PATH", "")
 
         params = urllib.parse.parse_qs(self.scope["query_string"].decode())
 
-        ports = params.get("port", ["5903"])
+        ports = params.get("port", ["5900"])
         default_port = int(ports[0])
+        guacd_recording_name = params.get("recording_name", ["task-recording"])[0]
+
         self.client = GuacamoleClient(guacd_hostname, guacd_port)
+
         self.client.handshake(
             protocol="vnc",
             width=1280,
             height=1024,
             hostname="localhost",
             port=default_port,
+            recording_path=guacd_recording_path,
+            recording_name=guacd_recording_name,
         )
 
         if self.client.connected:
