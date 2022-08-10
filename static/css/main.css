@@ -37,6 +37,10 @@
     position: relative;
 }
 
+.dialog {
+    display: none;
+}
+
 .no-close .ui-dialog-titlebar-close {
     display: none 
 }
