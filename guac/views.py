@@ -2,16 +2,18 @@ import libvirt
 
 from base64 import urlsafe_b64decode
 from django.shortcuts import render
+from uuid import uuid3, NAMESPACE_DNS
 from xml.etree import ElementTree as ET
 
 
 def index(request, task_id, session_data):
     dsn = "qemu:///system"
     conn = libvirt.open(dsn)
-    recording_name = f"{task_id}_recording"
+    recording_name = ""
     if conn:
         try:
             session_id, label = urlsafe_b64decode(session_data).decode("utf8").split("|")
+            recording_name = f"{task_id}_{session_id}"
             dom = conn.lookupByName(label)
             if dom:
                 state = dom.state(flags=0)
@@ -39,7 +41,8 @@ def index(request, task_id, session_data):
 
 
 def playback(request, task_id):
-    playback_url = f"{task_id}_recording"
+    session_id = uuid3(NAMESPACE_DNS, task_id).hex[:16]
+    playback_url = f"{task_id}_{session_id}"
 
     if playback_url:
         return render(
