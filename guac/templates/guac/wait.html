@@ -14,7 +14,13 @@
             <h4>Hang on...</h4>
             <p>The VM is not running, yet. This page will refresh every 5 seconds.</p>
             <div class="progress progress-striped active" style="margin-top: 10px;"></div>
-            <button type="button" onclick="window.close();">Close</button>
+            <button type="button" id="taskStatus">View Task</button>
+            <script>
+                var task_url = location.origin + 'submit/status/{{task_id}}'
+                document.getElementById("taskStatus").addEventListener("click", function() {
+                    location.replace(task_url);
+                }, false);
+            </script>
         </div>
         <script type="text/JavaScript">setTimeout("location.reload(true);",5000);</script>
     {% endblock %}

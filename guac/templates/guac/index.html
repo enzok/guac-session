@@ -20,10 +20,15 @@
             <div class="inner">
                 <p class="message"></p>
                 <p class="error_msg"></p>
+                <button type="button" id="taskStatus">View Task</button>
             </div>
         </div>
         <script>
-	    GuacMe("html", {{vncport}}, "{{session_id}}", "{{recording_name}}");
+            var task_url = location.origin + '/submit/status/{{task_id}}'
+            document.getElementById("taskStatus").addEventListener("click", function() {
+                location.replace(task_url);
+            }, false);
+	        GuacMe("html", {{vncport}}, "{{session_id}}", "{{recording_name}}");
         </script>
     </div>
 </body>

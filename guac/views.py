@@ -33,11 +33,12 @@ def index(request, task_id, session_data):
                 {
                     "vncport": vncport,
                     "session_id": session_id,
+                    "task_id": task_id,
                     "recording_name": recording_name,
                 },
             )
         else:
-            return render(request, "guac/wait.html")
+            return render(request, "guac/wait.html", {"task_id": task_id})
 
 
 def playback(request, task_id):
