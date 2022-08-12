@@ -10,7 +10,18 @@
         <div class="alert alert-secondary">
             <h4>Error</h4>
             <p>{{error_msg}}</p>
-            <button type="button" onclick="window.close();">Close</button>
+            <script>
+                switch ('{{error}}') {
+                    case 'remote session':
+                        var task_url = location.origin + 'submit/status/{{task_id}}';
+                        break;
+                    case 'playback':
+                        var task_url = location.origin + 'analysis/{{task_id}}';
+                }
+                document.getElementById("taskStatus").addEventListener("click", function() {
+                    location.replace(task_url);
+                }, false);
+            </script>
         </div>
     {% endblock %}
 </body>

@@ -12,13 +12,19 @@ def index(request, task_id, session_data):
     recording_name = ""
     if conn:
         try:
-            session_id, label = urlsafe_b64decode(session_data).decode("utf8").split("|")
+            session_id, label = (
+                urlsafe_b64decode(session_data).decode("utf8").split("|")
+            )
             recording_name = f"{task_id}_{session_id}"
             dom = conn.lookupByName(label)
             if dom:
                 state = dom.state(flags=0)
         except Exception as e:
-            return render(request, "guac/error.html", {"error_msg": e})
+            return render(
+                request,
+                "guac/error.html",
+                {"error_msg": f"{e}", "error": "remote session", "task_id": task_id},
+            )
 
     if state:
         if state[0] == 1:
@@ -55,5 +61,7 @@ def playback(request, task_id):
         )
     else:
         return render(
-            request, "guac/error.html", {"error_msg": f"Does not exist: {playback_url}"}
+            request,
+            "guac/error.html",
+            {"error_msg": f"File does not exist: {playback_url}", "error": "playback"},
         )
