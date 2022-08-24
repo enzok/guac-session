@@ -12,7 +12,7 @@ def index(request, task_id, session_data):
     recording_name = ""
     if conn:
         try:
-            session_id, label = (
+            session_id, label, guest_ip = (
                 urlsafe_b64decode(session_data).decode("utf8").split("|")
             )
             recording_name = f"{task_id}_{session_id}"
@@ -41,6 +41,7 @@ def index(request, task_id, session_data):
                     "session_id": session_id,
                     "task_id": task_id,
                     "recording_name": recording_name,
+                    "guest_ip": guest_ip,
                 },
             )
         else:

@@ -23,21 +23,30 @@ class GuacamoleWebSocketConsumer(AsyncWebsocketConsumer):
         guacd_hostname = os.getenv("GUACD_SERVICE_HOST", "localhost")
         guacd_port = int(os.getenv("GUACD_SERVICE_PORT", "4822"))
         guacd_recording_path = os.getenv("GUACD_RECORDING_PATH", "")
+        guest_protocol = os.getenv("GUEST_PROTOCOL", "vnc")
+        guest_width = int(os.getenv("GUEST_WIDTH", "1280"))
+        guest_height = int(os.getenv("GUEST_HEIGHT", "1024"))
 
         params = urllib.parse.parse_qs(self.scope["query_string"].decode())
 
-        ports = params.get("port", ["5900"])
-        default_port = int(ports[0])
+        if "rdp" in guest_protocol:
+            guest_host = params.get("guest_ip", "")
+            guest_port = int(os.getenv("GUEST_RDP_PORT", "389"))
+        else:
+            guest_host = "localhost"
+            ports = params.get("vncport", ["5900"])
+            guest_port = int(ports[0])
+        
         guacd_recording_name = params.get("recording_name", ["task-recording"])[0]
 
         self.client = GuacamoleClient(guacd_hostname, guacd_port)
 
         self.client.handshake(
-            protocol="vnc",
-            width=1280,
-            height=1024,
-            hostname="localhost",
-            port=default_port,
+            protocol=guest_protocol,
+            width=guest_width,
+            height=guest_height,
+            hostname=guest_host,
+            port=guest_port,
             recording_path=guacd_recording_path,
             recording_name=guacd_recording_name,
         )
