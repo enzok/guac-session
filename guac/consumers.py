@@ -26,12 +26,14 @@ class GuacamoleWebSocketConsumer(AsyncWebsocketConsumer):
         guest_protocol = os.getenv("GUEST_PROTOCOL", "vnc")
         guest_width = int(os.getenv("GUEST_WIDTH", "1280"))
         guest_height = int(os.getenv("GUEST_HEIGHT", "1024"))
+        guest_username = os.getenv("GUEST_USERNAME", "")
+        guest_password = os.getenv("GUEST_PASSWORD", "")
 
         params = urllib.parse.parse_qs(self.scope["query_string"].decode())
 
         if "rdp" in guest_protocol:
             guest_host = params.get("guest_ip", "")
-            guest_port = int(os.getenv("GUEST_RDP_PORT", "389"))
+            guest_port = int(os.getenv("GUEST_RDP_PORT", "3389"))
         else:
             guest_host = "localhost"
             ports = params.get("vncport", ["5900"])
@@ -47,6 +49,8 @@ class GuacamoleWebSocketConsumer(AsyncWebsocketConsumer):
             height=guest_height,
             hostname=guest_host,
             port=guest_port,
+            username=guest_username,
+            password=guest_password,
             recording_path=guacd_recording_path,
             recording_name=guacd_recording_name,
         )
