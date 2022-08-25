@@ -79,7 +79,7 @@ class GuacamoleWebSocketConsumer(AsyncWebsocketConsumer):
         Handle data received in the WebSocket, send to GuacamoleClient.
         """
         if text_data is not None:
-            logger.debug("Recieved from server: %s", text_data)
+            logger.debug("To server: %s", text_data)
             self.client.send(text_data)
 
     async def open(self):
@@ -89,5 +89,5 @@ class GuacamoleWebSocketConsumer(AsyncWebsocketConsumer):
         while True:
             content = await sync_to_async(self.client.receive)()
             if content:
-                logger.debug("Send to server: %s", content)
+                logger.debug("From server: %s", content)
                 await self.send(text_data=content)
