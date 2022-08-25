@@ -190,10 +190,16 @@ logging.config.dictConfig(
             "": {
                 "handlers": ["console"],
                 "level": LOG_LEVEL,
+                "propagate": True,
             },
             "django.utils.autoreload": {
                 "handlers": ["console"],
                 "level": "ERROR",
+            },
+            "django": {
+                "handlers": ["file"],
+                "level": LOG_LEVEL,
+                "propagate": False,
             },
             "guac-session": {
                 "handlers": ["file"],

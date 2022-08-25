@@ -1,6 +1,7 @@
 import asyncio
-import urllib.parse
+import logging
 import os
+import urllib.parse
 
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
@@ -10,6 +11,7 @@ from dotenv import load_dotenv
 from guacamole.client import GuacamoleClient
 
 load_dotenv()
+logger = logging.getLogger("guac-session")
 
 
 class GuacamoleWebSocketConsumer(AsyncWebsocketConsumer):
@@ -76,6 +78,7 @@ class GuacamoleWebSocketConsumer(AsyncWebsocketConsumer):
         """
         Handle data received in the WebSocket, send to GuacamoleClient.
         """
+        logger.debug(text_data)
         if text_data is not None:
             self.client.send(text_data)
 

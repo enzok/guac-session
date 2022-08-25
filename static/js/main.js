@@ -11,7 +11,11 @@ function GuacMe(element, guest_ip, vncport, session_id, recording_name) {
 
         dialog_container = $(element).find('.guaconsole')[0];
 
-        var terminal_ws_url = 'wss://' +  location.hostname;
+        var prot_map = {
+            "http:":  "ws:",
+            "https:": "wss:",
+        }
+        var terminal_ws_url = prot_map[location.protocol] + '//' + location.hostname;
 
         /* Initialize Guacamole Client */
         terminal_client = new Guacamole.Client(
