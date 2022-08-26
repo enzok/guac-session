@@ -4,9 +4,7 @@ import os
 import urllib.parse
 
 from asgiref.sync import sync_to_async
-from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-from distutils.util import strtobool
 from dotenv import load_dotenv
 from guacamole.client import GuacamoleClient
 
